@@ -1,6 +1,6 @@
 library(tidyverse)
 
-data <- read_csv(("project/data/Animal_Shelter_Animals.csv"))
+data <- read_csv(("data/Animal_Shelter_Animals.csv"))
 
 # get the top 5 intake reasons
 reasons <- data |>
@@ -37,4 +37,4 @@ data <- data |>
     )
   )
 
-write_csv(data, "project/derived_data/derived_data.csv")
+write_csv(data, "derived_data/derived_data.csv")

@@ -1,6 +1,6 @@
 library(tidyverse)
 
-data <- read_csv("project/derived_data/derived_data.csv")
+data <- read_csv("derived_data/derived_data.csv")
 
 
 data <- data |>
@@ -27,4 +27,4 @@ plot <- ggplot(data, aes(x = "", y = n, fill = intakereason_new)) +
   theme_void() +
   guides(fill = guide_legend(title = "Intake Reasons"))
 
-ggsave("project/figures/top5_reasons.png", plot, width=20, height=15, units='cm')
+ggsave("figures/top5_reasons.png", plot, width=20, height=15, units='cm')

@@ -1,6 +1,6 @@
 library(tidyverse)
 
-data <- read_csv("project/derived_data/derived_data.csv")
+data <- read_csv("derived_data/derived_data.csv")
 
 data <- data |>
   filter(
@@ -30,4 +30,4 @@ plot <- ggplot(data, aes(x = "", y = n, fill = speciesname_new)) +
   guides(fill = guide_legend(title = "Species")) + 
   labs(caption = "Most intook species other than cats and dogs")
 
-ggsave("project/figures/top5_species.png", plot, width=20, height=15, units='cm')
+ggsave("figures/top5_species.png", plot, width=20, height=15, units='cm')
