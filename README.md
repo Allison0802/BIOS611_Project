@@ -11,11 +11,11 @@ Then start an RStudio server with this:
 docker run -d -e PASSWORD=yourpassword --rm -p 8787:8787 -v $(pwd):/home/rstudio/project -t 611
 ```
 
-And visit http://localhost:8787 in your browser. Log in with user `rstudio` and password `yourpassword`.
+, and visit http://localhost:8787 in your browser. Log in with user `rstudio` and password `yourpassword`.
 
-Now go into the terminal inside of the RStudio server, use `cd project` to go to my project folder.
+Now go to the terminal inside of the RStudio server, and use `cd project` to go to my project folder first.
 
-And run these to produce two pie charts showing top 5 intake reasons of the shelter animals and top 5 species 
+Finally, run these to produce two pie charts showing top 5 intake reasons of the shelter animals and top 5 species 
 other than cats and dogs of the shelter animals.
 ```
 make figures/tops_reasons.png
