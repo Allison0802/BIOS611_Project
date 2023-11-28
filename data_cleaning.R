@@ -2,39 +2,60 @@ library(tidyverse)
 
 data <- read_csv(("data/Animal_Shelter_Animals.csv"))
 
-# get the top 5 intake reasons
-reasons <- data |>
-  group_by(intakereason) |>
-  summarise(
-    n = n()
-  ) |>
-  arrange(
-    desc(n)
-  ) 
-
-top5_reason <- reasons$intakereason[1:5]
-
-# get the top 5 species other than cats and dogs
-species <- data |>
-  group_by(speciesname) |>
-  summarise(
-    n = n()
-  ) |>
-  arrange(
-    desc(n)
-  ) 
-
-top7_species <- species$speciesname[1:7]
-
-#new intake reasons and speciesname variables
+# clean dates, discard the time because they are all 12:00:00 am
 data <- data |>
+  distinct() |>
   mutate(
-    intakereason_new = if_else(
-      intakereason %in% top5_reason, intakereason, "Other"
-    ),
-    speciesname_new = if_else(
-      speciesname %in% top7_species, speciesname, "Other"
-    )
+    intakedate = as_date(mdy_hms(intakedate)),
+    movementdate = as_date(mdy_hms(movementdate)),
+    returndate = as_date(mdy_hms(returndate)),
+    deceaseddate = as_date(mdy_hms(deceaseddate))
   )
 
-write_csv(data, "derived_data/derived_data.csv")
+# transpose to one id per row
+move_return <- data |>
+  select(id, movementdate, movementtype, returndate, returnedreason) 
+
+move_return <- move_return |>
+  group_by(id) |>
+  arrange( movementdate, returndate, .by_group = T) |>
+  mutate(
+    index = row_number(id)
+  ) |>
+  pivot_wider(
+    names_from = index,
+    values_from = c(movementdate, movementtype, returndate, returnedreason)
+  )
+  
+data <- left_join(select(data, -c(movementdate, movementtype, returndate, returnedreason)), move_return) |>
+  distinct() # still have duplicates
+
+# view the duplicates
+dup_id <- data |>
+  group_by(id) |>
+  summarise(
+    n = n()
+  ) |>
+  filter(n > 1)
+
+dups <- left_join(dup_id, data)
+# all  dups have a True and a False in "istrial" 
+
+count(filter(data, istrial == T))
+# a total of 51 with istrial is True -- among which 39 are the duplicates
+
+# change records with conflicting istrial values to True
+
+dups <- dups |>
+  mutate(
+    istrial = T 
+  ) |>
+  distinct()|>
+  select(-n)
+
+data <- rbind(
+  filter(data, !(id %in% dup_id$id)),
+  dups
+)
+
+write_csv(data, "data/cleaned_data.csv")
