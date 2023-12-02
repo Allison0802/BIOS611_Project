@@ -12,7 +12,7 @@ data <- data |>
     deceaseddate = as_date(mdy_hms(deceaseddate))
   )
 
-# transpose to one id per row
+# transpose to one id per row, create a column indicating if the animal has ever been adopted
 move_return <- data |>
   select(id, movementdate, movementtype, returndate, returnedreason) 
 
@@ -25,6 +25,10 @@ move_return <- move_return |>
   pivot_wider(
     names_from = index,
     values_from = c(movementdate, movementtype, returndate, returnedreason)
+  ) |>
+  mutate(
+    adopt = +if_any(starts_with("movementtype"), ~. == "Adoption"),
+    adopt = if_else(is.na(adopt), F, T)
   )
   
 data <- left_join(select(data, -c(movementdate, movementtype, returndate, returnedreason)), move_return) |>
@@ -53,9 +57,19 @@ dups <- dups |>
   distinct()|>
   select(-n)
 
+#split the breed column
+
 data <- rbind(
   filter(data, !(id %in% dup_id$id)),
   dups
-)
+) |>
+  separate_wider_delim(
+    breedname,
+    delim = "/",
+    names = c("breed1", "breed2", "breed3"),
+    too_few = "align_start",
+    cols_remove = F
+  )
 
 write_csv(data, "data/cleaned_data.csv")
+
