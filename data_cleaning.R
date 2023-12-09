@@ -2,7 +2,7 @@ library(tidyverse)
 
 data <- read_csv(("data/Animal_Shelter_Animals.csv"))
 
-# clean dates, discard the time because they are all 12:00:00 am
+# clean dates, drop the time because they are all 12:00:00 am
 data <- data |>
   distinct() |>
   mutate(
@@ -13,26 +13,47 @@ data <- data |>
   )
 
 # transpose to one id per row, create a column indicating if the animal has ever been adopted
-move_return <- data |>
-  select(id, movementdate, movementtype, returndate, returnedreason) 
+move_info <- data |>
+  select(id, movementdate,movementtype) 
 
-move_return <- move_return |>
+move_date_type <- move_info |>
   group_by(id) |>
-  arrange( movementdate, returndate, .by_group = T) |>
+  arrange(movementdate, .by_group = T) |>
   mutate(
     index = row_number(id)
   ) |>
   pivot_wider(
     names_from = index,
-    values_from = c(movementdate, movementtype, returndate, returnedreason)
+    values_from = c(movementdate, movementtype)
   ) |>
   mutate(
     adopt = +if_any(starts_with("movementtype"), ~. == "Adoption"),
     adopt = if_else(is.na(adopt), F, T)
   )
-  
-data <- left_join(select(data, -c(movementdate, movementtype, returndate, returnedreason)), move_return) |>
-  distinct() # still have duplicates
+
+first_adopt <- move_info |>
+  group_by(id) |>
+  filter(movementtype == "Adoption") |>
+  summarise(first_adoption_date = min(movementdate, na.rm = TRUE))
+
+return_date_type <- data |>
+  select(id, returndate, returnedreason) |>
+  group_by(id) |>
+  arrange(returndate, .by_group = T) |>
+  mutate(
+    index = row_number(id)
+  ) |>
+  pivot_wider(
+    names_from = index,
+    values_from = c(returndate, returnedreason)
+  )
+
+data <- list(select(data, -c(movementdate, movementtype, returndate, returnedreason)), 
+             move_date_type, 
+             first_adopt, 
+             return_date_type) |>
+  reduce(full_join, by = 'id') |>
+  distinct()
 
 # view the duplicates
 dup_id <- data |>
