@@ -57,7 +57,7 @@ dups <- dups |>
   distinct()|>
   select(-n)
 
-#split the breed column
+#split the breed column and transform the unit of age to months 
 
 data <- rbind(
   filter(data, !(id %in% dup_id$id)),
@@ -69,6 +69,9 @@ data <- rbind(
     names = c("breed1", "breed2", "breed3"),
     too_few = "align_start",
     cols_remove = F
+  ) |>
+  mutate(
+    age_month = as.numeric(word(animalage, 1)) * 12 + as.numeric(word(animalage, 3)) 
   )
 
 write_csv(data, "data/cleaned_data.csv")
