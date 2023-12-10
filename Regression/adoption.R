@@ -67,4 +67,15 @@ png(filename = "figures/residual_plot.png", width = 20, height = 15, units = "cm
 plotres(model1) 
 dev.off()
 
+# glm model
 
+model_glm <- glm(adopt ~ sexname + age_month + intakereason_new + speciesname_new,
+                 data = data, family = "binomial")
+t <- summary(model_glm)
+
+estimation <- tibble(
+  coefficients = names(model_glm$coefficients),
+  estimates = model_glm$coefficients
+)
+
+write_csv(estimation, "data/glm_estimate.csv")

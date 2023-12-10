@@ -1,6 +1,6 @@
 library(tidyverse)
 
-data <- read_csv(("data/Animal_Shelter_Animals.csv"))
+data <- read_csv(("Animal_Shelter_Animals.csv"))
 
 # clean dates, drop the time because they are all 12:00:00 am
 data <- data |>
