@@ -78,7 +78,7 @@ dups <- dups |>
   distinct()|>
   select(-n)
 
-#split the breed column and transform the unit of age to months 
+#split the breed column, transform the unit of age to months, calculate time to be adopted
 
 data <- rbind(
   filter(data, !(id %in% dup_id$id)),
@@ -92,7 +92,8 @@ data <- rbind(
     cols_remove = F
   ) |>
   mutate(
-    age_month = as.numeric(word(animalage, 1)) * 12 + as.numeric(word(animalage, 3)) 
+    age_month = as.numeric(word(animalage, 1)) * 12 + as.numeric(word(animalage, 3)),
+    time_in_shelter = difftime(first_adoption_date, intakedate, units = "day")
   )
 
 write_csv(data, "data/cleaned_data.csv")

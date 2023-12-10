@@ -14,3 +14,5 @@ RUN apt update && apt install -y man-db && rm -rf /var/lib/apt/lists/*
 RUN yes|unminimize
 
 RUN R -e "install.packages(\"tidyverse\")"
+RUN R -e "install.packages(\"gbm\")"
+RUN R -e "install.packages(\"plotmo\")"
