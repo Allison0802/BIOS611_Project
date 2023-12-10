@@ -17,3 +17,9 @@ figures/intake_years.png: data/cleaned_data.csv Exploratory/time.R
 	
 figures/residual_plot.png: data/cleaned_data.csv Regression/adoption.R
 	Rscript Regression/adoption.R
+	
+data/model_data.csv: data/cleaned_data.csv Regression/adoption.R
+	Rscript Regression/adoption.R
+	
+figures/model_compare.png: data/model_data.csv Regression/performance.R
+	Rscript Regression/adoption.R

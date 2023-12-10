@@ -46,6 +46,7 @@ data <- data |>
     istransfer = 1 * istransfer,
     adopt = 1 * adopt
   )
+write_csv(data, "data/model_data.csv")
 
 #build the model
 explanatory <- data %>% select(-adopt, -intakereason, -speciesname) %>% names()
