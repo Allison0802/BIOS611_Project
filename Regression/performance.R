@@ -32,7 +32,7 @@ res.glm <- k_folds(n_folds, data,
 
 res.gbm <- k_folds(n_folds, data,
                    function(data){
-                     gbm(adopt ~ sexname + age_month + intakereason_new + speciesname_new,
+                     gbm(adopt ~ as.factor(sexname) + age_month + as.factor(intakereason_new) + as.factor(speciesname_new),
                          data = data,
                          distribution="bernoulli",
                          n.trees = 100,
