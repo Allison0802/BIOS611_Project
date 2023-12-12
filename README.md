@@ -25,3 +25,4 @@ Makefile
 To build the report, go to the terminal inside of rstudio server and say:
 
     > make Report.html
+
