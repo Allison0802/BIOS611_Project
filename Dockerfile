@@ -16,3 +16,4 @@ RUN yes|unminimize
 RUN R -e "install.packages(\"tidyverse\")"
 RUN R -e "install.packages(\"gbm\")"
 RUN R -e "install.packages(\"plotmo\")"
+RUN R -e "install.packages(\"markdown\")"
